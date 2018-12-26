@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>reveal.js – The HTML Presentation Framework</title>
+
+		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="author" content="Hakim El Hattab">
+
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css" id="theme">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h1>Game dev. Promises. Callbacks</h1>
+					<h3></h3>
+					<p>
+						<small></small>
+					</p>
+                </section>
+                
+                <section>
+				    <section>
+				    	<h2>Promises.</h2>
+				    	<p></p>
+                    </section>
+
+                    <section>
+                        <img src="img/2015PRODIGY_EM_262_050515-1.jpg"/>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            <h2>Constructor</h2>
+                            ```
+                                let promise = new Promise(function(resolve, reject) {
+                                // executor (the producing code, "singer")
+                                });
+                            ```
+                        </script>
+                    </section>
+
+                    <section>
+                        <ul>
+                            <li><strong>state</strong> — initially “pending”, then changes to either “fulfilled” or “rejected”,</li>
+                            <li><strong>result</strong> — an arbitrary value of your choosing, initially undefined.</li>
+                        </ul>
+                    </section>
+
+                    <section>
+                        <ul>
+                            <li><strong>resolve</strong>(value) — to indicate that the job finished successfully:
+                                <ul>
+                                    <li>
+                                        sets state to "fulfilled",
+                                    </li>
+                                    <li>
+                                        sets result to value.
+                                    </li>
+                                </ul>
+                            </li>
+                            <li><strong>reject</strong>(error) — to indicate that an error occurred:
+                                <ul>
+                                    <li>
+                                        sets state to "rejected",
+                                    </li>
+                                    <li>
+                                        sets result to error.
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <img src="img/slide4.png">
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ```
+                                let promise = new Promise(function(resolve, reject) {
+                                    // the function is executed automatically when the 
+                                    // promise is constructed
+                                          
+                                    // after 1 second signal that the job is done with 
+                                    // the result "done!"
+                                    setTimeout(() => resolve("done!"), 1000);
+                                });
+                            ```
+                        </script>
+                    </section>
+                    <section>
+                        <img src="img/slide6.PNG"/>
+                    </section>
+                    <section data-markdown>
+                            <script type="text/template">
+                                ```
+                                    let promise = new Promise(function(resolve, reject) {
+                                        // after 1 second signal that the job is finished
+                                        // with an error
+                                        setTimeout(() => reject(new Error("Whoops!")), 1000);
+                                    });
+                                ```
+                                <img src="img/slide7.PNG"/>
+                            </script>
+                    </section>
+                    <section>
+                        <h2>Consumers: “then” and “catch”</h2>
+                    </section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ```
+                                promise.then(
+                                    function(result) { /* handle a successful result */ },
+                                    function(error) { /* handle an error */ }
+                                );
+                            ```
+                        </script>
+                    </section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ```
+                                let promise = new Promise(function(resolve, reject) {
+                                    setTimeout(() => resolve("done!"), 1000);
+                                });
+                              
+                                // resolve runs the first function in .then
+                                promise.then(
+                                    result => alert(result), // shows "done!" after 1 second
+                                    error => alert(error) // doesn't run
+                                );
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ```
+                                let promise = new Promise(function(resolve, reject) {
+                                    setTimeout(() => reject(new Error("Whoops!")), 1000);
+                                });
+                              
+                                // reject runs the second function in .then
+                                promise.then(
+                                    result => alert(result), // doesn't run
+                                    error => alert(error) // shows "Error: Whoops!" 
+                                    //after 1 second
+                                );
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ```
+                            let promise = new Promise(resolve => {
+                                setTimeout(() => resolve("done!"), 1000);
+                            });
+                                  
+                            promise.then(alert); // shows "done!" after 1 second
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ```
+                            let promise = new Promise((resolve, reject) => {
+                                setTimeout(() => reject(new Error("Whoops!")), 1000);
+                            });
+                              
+                            // .catch(f) is the same as promise.then(null, f)
+                            promise.catch(alert); // shows "Error: Whoops!" after 1 second
+                            ```
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>Game Dev.</h2>
+                    </section>
+                    <section>
+                        <img src="img/80.png">
+                    </section>
+                    <section>
+                        <img src="img/segment2.jpg">
+                    </section>
+                    <section>
+                        <h2>What You Should Know About Web Dev Salaries</h2>
+                    </section>
+                    <section data-background="img/Depositphotos_102442536_original-1-768x768.jpg">
+						<h2 style="color:black">Front-End Dev Salary (Net) in Different Countries</h2>
+                    </section>
+                    <section>
+                        <h2>Predictions for JS Salaries in the Future</h2>
+                    </section>
+                </section>
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// More info https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// More info https://github.com/hakimel/reveal.js#dependencies
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/search/search.js', async: true },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
